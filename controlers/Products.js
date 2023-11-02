@@ -1,13 +1,15 @@
 const Product = require("../Model/Products")
 
 const createProduct = async (req, res) => {
-   const data = new Product({
-      productName: req.body.productName,
-      category: req.body.category,
-      price: req.body.price,
-      rating: req.body.rating,
-      bestseller: req.body.bestseller
-   })
+    const data = new Product(req.body)
+      //{
+   //    productName: req.body.productName,
+   //    category: req.body.category,
+   //    price: req.body.price,
+   //    rating: req.body.rating,
+   //    bestseller: req.body.bestseller
+   // }
+  
 
    try {
       const dataToSave = await data.save()
@@ -21,16 +23,41 @@ const createProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
    try {
       const data = await Product.find(req.query)
-      res.status(200).json(data)
+      if(data.length < 1){
+         res.status(200).json({
+            data:data,
+            totalRecordCount:0,
+            isSuccess:true,
+            message:"Product List is Empty"
+         })
+      }
+      res.status(200).json({
+         data:data,
+         totalRecordCount:data.length,
+         isSuccess:true,
+         message:"All product List"
+      })
    } catch (error) {
-      res.json({ message: error.message })
+      res.json({ 
+         message: error.message })
    }
 }
 
 const getProduct = async (req, res) => {
    try {
       const data = await Product.findById(req.params.id)
-      res.status(200).json(data)
+      if(!data){
+         res.status(200).json({
+            data:[],
+            totalRecordCount:data.length,
+            Success:true,
+            message:"No record found"
+         })
+      }
+      res.status(200).json({
+         data:data,
+         isSucces:true,
+      })
    } catch (error) {
       res.json({ message: error.message })
    }
@@ -44,7 +71,10 @@ const updateProduct = async (req, res) => {
 
       const result = await Product.findByIdAndUpdate(id, updatedData, options)
 
-      res.status(200).json(result)
+      res.status(200).json({
+         data:result,
+         isSucces:true
+      })
    } catch (error) {
       res.json({ message: error.message })
    }
@@ -55,7 +85,8 @@ const deleteProduct = async (req, res) => {
       const id = req.params.id;
       const data = await Product.findByIdAndDelete(id)
 
-      res.send(` ${data.productName} has been deleted..`)
+      res.status(200).json( {isSucces:true,
+         message:` ${data.productName} has been deleted..`})
 
    } catch (error) {
       res.json({ message: error.message })

@@ -23,7 +23,15 @@ const ProductSchema = new mongoose.Schema({
         type:Boolean,
         default:false,
         required:true
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now()
+    },
+    createdBy:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Users"
     }
-})
+},{timestamps:true})
 
 module.exports = mongoose.model('Product', ProductSchema)

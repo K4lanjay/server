@@ -1,6 +1,7 @@
 const express = require("express")
 const app = express()
 const products_route = require("./routes/Products")
+const user_route = require("./routes/Users")
 const connectDB = require("./db/connectDB")
 
 const PORT = process.env.PORT || 5000
@@ -12,6 +13,7 @@ app.get("/", (req, res)=>{res.send("Hey User")})
 //middleware to set routes
 
 app.use("/api/products",products_route)
+app.use("/api/user", user_route)
 
 //listening server
 const start = async () => {
