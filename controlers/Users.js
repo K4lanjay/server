@@ -1,5 +1,5 @@
 const User = require("../Model/Users")
-
+const jwt = require("jsonwebtoken")
 const createUser = async (req, res) => {
   const data =  new User(req.body)
   try{
@@ -27,15 +27,27 @@ const getUser = async (req, res) => {
         message:"User not found"
       })
     }
-    if(!data.authenticate(req.body.password)){
+    if(!User.authenticate(req.body.password, data[0].salt, data[0].password)){
        return res.status(400).json({
         message:"Invalid credentials"
        })
     }
+
+    const token = jwt.sign({_id:data[0].token}, process.env.SECRET_KEY)
+    res.cookie("token", token, {expire:{}})
     return res.status(200).json({
+        user:data,
+        token:token,
         message:"Sign in successful"
     })
  
 }
 
-module.exports = {createUser, getUser}
+const signOutUser = async (req, res) => {
+    res.clearCookie("token")
+    return res.json({
+      message:"sign out successfull"
+    })
+}
+
+module.exports = {createUser, getUser, signOutUser}
