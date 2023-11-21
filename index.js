@@ -3,6 +3,7 @@ const app = express()
 const products_route = require("./routes/Products")
 const user_route = require("./routes/Users")
 const connectDB = require("./db/connectDB")
+require("dotenv").config();
 
 const PORT = process.env.PORT || 5000
 
