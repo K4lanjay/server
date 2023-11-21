@@ -30,6 +30,10 @@ const userSchema = mongoose.Schema({
         type:String,
         required:true,
     },
+    role:{ 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Role' 
+    },
     salt:String
 },{
     timestamps:true
@@ -45,15 +49,18 @@ userSchema.pre('save', function (next) {
 
 
 const securePassword = (plainpassword, salt)=>{
+  console.log(plainpassword, "value")
       if(!plainpassword){
         console.log("invalid")
+        return ""
       }
       try{
         console.log("this is working")
         return crypto.createHmac("sha256", salt).update(plainpassword).digest("hex")
       } catch(error){
+        console.log("catch error")
         console.log(error.message)
-      } 
+      }
     }
 
 // userSchema.methods.authenticate = (plainpassword)=>{
@@ -62,10 +69,10 @@ const securePassword = (plainpassword, salt)=>{
 //   return securePassword(plainpassword) == this.encry_password
 // }
 
-userSchema.statics.authenticate = (plainpassword, encry_password)=>{
-  console.log(plainpassword, encry_password)
-  console( securePassword(plainpassword) === encry_password)
-  return securePassword(plainpassword) === encry_password
+userSchema.statics.authenticate = (plainpassword, salt, encry_password)=>{
+  //  console.log(plainpassword, encry_password)
+  //  console.log(securePassword(plainpassword, salt) == encry_password)
+  return securePassword(plainpassword, salt) == encry_password
 }
 
 module.exports = mongoose.model("user", userSchema)
