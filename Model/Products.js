@@ -9,7 +9,7 @@ const ProductSchema = new mongoose.Schema({
         type:String,
         enum:{
             values:["electronics", "furniture", "clothes", "food & beverage"],
-            message: "value not supported"
+            message: "value not supported" 
         }
     },
     price:{
